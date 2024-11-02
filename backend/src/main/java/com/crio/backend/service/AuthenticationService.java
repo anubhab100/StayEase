@@ -5,7 +5,7 @@ import com.crio.backend.entity.User;
 import com.crio.backend.repository.UserRepository;
 import com.crio.backend.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +14,11 @@ import org.slf4j.LoggerFactory;
 public class AuthenticationService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
 
     /**
      * Authenticate a user by verifying email and password.
@@ -35,23 +34,15 @@ public class AuthenticationService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
 
         // Verify password
+        logger.info(password);
+        logger.info(user.getPassword());
         if (passwordEncoder.matches(password, user.getPassword())) {
 
             return user; // Authentication successful
         } else {
+            logger.error("Invalid password for: {}", email);
             throw new Exception("Invalid password"); // Authentication failed
         }
     }
 
-    public void testPasswordEncoding() {
-        String rawPassword = "1234"; // The password you intend to use
-        String encodedPassword = passwordEncoder.encode(rawPassword);
-
-        // Log the encoded password
-        System.out.println("Encoded password: " + encodedPassword);
-
-        // Check if it matches
-        boolean matches = passwordEncoder.matches(rawPassword, encodedPassword);
-        System.out.println("Password match test: " + matches); // Should print true
-    }
 }

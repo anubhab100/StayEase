@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,7 +30,7 @@ public class UserController {
     private JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder passwordEncoder;
 
     // Endpoint for user registration (Public)
     @PostMapping("/register")
@@ -43,19 +43,13 @@ public class UserController {
             userDTO.setPassword(encodedPassword);
 
             User createdUser = userService.registerUser(userDTO);
+            System.out.println("The encoded password;" + encodedPassword);
             logger.info("User registered successfully: {}", createdUser.getEmail());
 
             // Generate JWT token for the new user
             String token = jwtTokenUtil.generateToken(createdUser.getEmail());
             logger.info("JWT token generated for user: {}", createdUser.getEmail());
 
-            // this is extra code
-            String rawPassword = "1234"; // The password you want to test
-            System.out.println("Encoded password: " + encodedPassword); // Should output a new hash
-            boolean matches = passwordEncoder.matches(rawPassword, encodedPassword); // Should be true
-            System.out.println("Does the raw password match the encoded one? " + matches);
-
-            //////// rest
             return ResponseEntity.status(HttpStatus.CREATED).header("Authorization", "Bearer " + token)
                     .body(createdUser);
         } catch (Exception e) {

@@ -29,15 +29,16 @@ public class UserService {
 
         // Create new user entity
         User user = new User();
-        String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
+        // String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         user.setEmail(userDTO.getEmail());
-        user.setPassword(encodedPassword);
+        user.setPassword(userDTO.getPassword());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setRole(userDTO.getRole() != null ? userDTO.getRole() : Role.CUSTOMER); // Default to CUSTOMER role
 
         // Save the user in the database
-        return userRepository.save(user);
+        userRepository.save(user);
+        return user;
     }
 
     public User findByEmail(String email) {

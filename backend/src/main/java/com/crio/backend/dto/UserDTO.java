@@ -15,6 +15,4 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private Role role; // Optional: Defaults to CUSTOMER if not provided
-
-    // You can set role default to CUSTOMER in your service logic
 }
