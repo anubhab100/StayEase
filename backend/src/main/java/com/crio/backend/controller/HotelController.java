@@ -53,7 +53,7 @@ public class HotelController {
     // Endpoint for updating hotel details (Only HOTEL_MANAGER can update hotel
     // details)
     @PutMapping("/{hotelId}")
-    @PreAuthorize("hasRole('HOTEL_MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HOTEL_MANAGER')")
     public ResponseEntity<Hotel> updateHotel(@PathVariable Long hotelId, @RequestBody Hotel hotelDetails) {
         logger.info("Attempting to update hotel with ID: {}", hotelId);
         try {
